@@ -2,11 +2,11 @@
 param(
   [string]
   [Parameter(Mandatory = $true, Position = 0)]
-  $DowanloadDir
+  $DowanloadDir,
 
   [string]
   [Parameter(Mandatory = $true)]
-  $AgentOS
+  $AgentOS,
 
   [string]
   [Parameter(Mandatory = $true)]
