@@ -1,6 +1,19 @@
-$DowanloadDir = "$(Build.SourcesDirectory)"
-$ExtractDestination = Join-Path $(Build.SourcesDirectory) "ps_preview"
-$AgentOS, $AgentAarchitecture  = "$(Agent.OS)", "$(Agent.OSArchitecture)"
+[cmdletbinding()]
+param(
+  [string]
+  [Parameter(Mandatory = $true, Position = 0)]
+  $DowanloadDir$DowanloadDir
+
+  [string]
+  [Parameter(Mandatory = $true)]
+  $AgentOS
+
+  [string]
+  [Parameter(Mandatory = $true)]
+  $AgentAarchitecture
+)
+
+$ExtractDestination = Join-Path $DowanloadDir "ps_preview"
 
 switch ($AgentOS) {
         "Windows_NT" { $OS = "win" }

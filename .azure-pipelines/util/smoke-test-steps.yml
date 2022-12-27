@@ -13,7 +13,6 @@ jobs:
     vmImage: ${{ parameters.agentPoolVMImage }}
 
   steps:
-  - checkout: self
   - task: UseDotNet@2
     condition: ne(variables['netCoreVersion'], '')
     displayName: 'Prepare .NET Core ${{ parameters.netCoreVersion }}'
@@ -26,7 +25,7 @@ jobs:
     displayName: DownLoad Package for ${{ parameters.psVersion }}
     inputs:
       filePath: 'tools/Test/SmokeTest/DownLoadPowershellPreviewPackage.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }}'
+      arguments: "-DowanloadDir: $(Build.SourcesDirectory) -AgentOS '$(Agent.OS)' -AgentAarchitecture '$(Agent.OSArchitecture)'"
 
   - task: ExtractFiles@1
     condition: and(succeeded(), eq('${{ parameters.psVersion }}', 'preview'))
