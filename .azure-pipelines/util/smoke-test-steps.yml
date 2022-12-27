@@ -13,6 +13,7 @@ jobs:
     vmImage: ${{ parameters.agentPoolVMImage }}
 
   steps:
+  - checkout: self
   - task: UseDotNet@2
     condition: ne(variables['netCoreVersion'], '')
     displayName: 'Prepare .NET Core ${{ parameters.netCoreVersion }}'
