@@ -1,16 +1,18 @@
-[cmdletbinding()]
+[cmdletbinding((DefaultParameterSetName = 'PowerShell'))]
 param(
   [string]
-  [Parameter(Mandatory = $true, Position = 0)]
+  [Parameter(Mandatory = $true, ParameterSetName = 'PowerShell', Position = 0)]
+  [Parameter(Mandatory = $false, ParameterSetName = 'PowerShellPreview', Position = 0)]
   $requiredPsVersion,
   [string]
-  [Parameter(Mandatory = $true, Position = 1)]
+  [Parameter(Mandatory = $true, ParameterSetName = 'PowerShell', Position = 1)]
+  [Parameter(Mandatory = $true, ParameterSetName = 'PowerShellPreview', Position = 1)]
   $script,
   [string]
-  [Parameter(Mandatory = $false)]
+  [Parameter(Mandatory = $true, ParameterSetName = 'PowerShellPreview')]
   $PowerShellPreviewPath,
   [string]
-  [Parameter(Mandatory = $true)]
+  [Parameter(Mandatory = $true, ParameterSetName = 'PowerShellPreview')]
   $AgentOS
 )
 
