@@ -41,7 +41,7 @@ jobs:
     displayName: Prepare Powershell ${{ parameters.psVersion }}
     inputs:
       filePath: 'tools/Test/SmokeTest/PrepareRequiredPowershell.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -PowerShellPreviewPath "$(destPath)"'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
       
   - task: DownloadPipelineArtifact@2
     condition: and(succeeded(), eq(variables['GalleryName'], 'LocalRepo'), eq(variables['PipelineId'], ''))
