@@ -5,95 +5,6 @@ param(
   $requiredPsVersion
 )
 
-$IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
-$IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
-
-# The PowerShell destination
-if (-not $Destination){
-    if ($IsWinEnv) {
-        $Destination = "D:\a\_work\1\s"
-    }elseif($IsLinuxEnv){
-        $Destination = "/mnt/vss/_work/1/s"
-    }elseif($IsMacOSEnv){
-        $Destination = "/Users/runner/work/1/s"
-    }
-}
-
-# Preview version package download path
-$TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-function Expand-ArchiveInternal {
-    [CmdletBinding()]
-    param(
-        $Path,
-        $DestinationPath
-    )
-
-    if((Get-Command -Name Expand-Archive -ErrorAction Ignore))
-    {
-        Expand-Archive -Path $Path -DestinationPath $DestinationPath
-    }
-    else
-    {
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-        $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
-        $resolvedDestinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DestinationPath)
-        [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath,$resolvedDestinationPath)
-    }
-}
-
-function Install-Preview-PowerShell {
-  if (-not $IsWinEnv) {
-    $architecture = "x64"
-  } elseif ($(Get-ComputerInfo -Property OsArchitecture).OsArchitecture -eq "ARM 64-bit Processor") {
-    $architecture = "arm64"
-  } else {
-    switch ($env:PROCESSOR_ARCHITECTURE) {
-        "AMD64" { $architecture = "x64" }
-        "x86" { $architecture = "x86" }
-        default { throw "PowerShell package for OS architecture '$_' is not supported." }
-    }
-  }
-  
-  # Obtain current preview version
-  $null = New-Item -ItemType Directory -Path $TempDir -Force -ErrorAction SilentlyContinue
-  $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
-  $release = $metadata.PreviewReleaseTag -replace '^v'
-
-  if ($IsWinEnv) {
-    $packageName = "PowerShell-${release}-win-${architecture}.zip"
-  } elseif ($IsLinuxEnv) {
-      $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
-  } elseif ($IsMacOSEnv) {
-      $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
-  }
-
-  # Download preview version package
-  $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
-  Write-Verbose "About to download package from '$downloadURL' to a temp path '$TempDir'" -Verbose
-  $packagePath = Join-Path -Path $TempDir -ChildPath $packageName
-
-  try {
-    Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-  } finally {
-    if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
-      $ProgressPreference = $oldProgressPreference
-    }
-  }
-  # Unzip downloaded preview package
-  $contentPath= Join-Path -Path $TempDir -ChildPath "PowerShellPreview"
-  $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
-
-  if ($IsWinEnv){
-    # If IsWinEnv, need to extract in the same disk and then move.
-    Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
-    $contentPathContext = $contentPath + "\*"
-    Move-Item -Path $contentPathContext -Destination $Destination -Force
-  }else{
-    tar zxf $packagePath -C $Destination
-  }
-}
-
 function Install-PowerShell {
   param (
     [string]
@@ -102,12 +13,11 @@ function Install-PowerShell {
   )
   
   $windowsPowershellVersion = "5.1.14"
-
   # Prepare powershell
   if ($requiredPsVersion -ne $windowsPowershellVersion) {
     Write-Host "Installing PS $requiredPsVersion..."
     if('preview' -eq $requiredPsVersion){
-      Install-Preview-PowerShell
+      Write-Host "PowerShell preview package has been extracted to $(destPath)."
     }else{
       dotnet --version
       dotnet new tool-manifest --force
@@ -133,8 +43,8 @@ function Install-PowerShell {
     Exit"
     if('preview' -eq $requiredPsVersion){
       # Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
-      if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
-      ./pwsh -c $command
+      if ("$(Agent.OS)" -ne "Windows_NT") { chmod 755 $Destination/pwsh }
+      . "$(destPath)/pwsh" -c $command
       Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }else{
       dotnet tool run pwsh -c $command
