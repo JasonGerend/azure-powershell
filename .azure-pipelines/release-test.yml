@@ -32,7 +32,7 @@ parameters:
   type: string
   default: 6.0.x
 - name: netCoreVersion_7
-  displayName: .NET Version
+  displayName: .NET Version 7
   type: string
   default: 7.0.x
 
@@ -70,5 +70,5 @@ jobs:
     name: 'MacOS_PS_Preview_SmokeTest'
     agentPoolName: ${{ variables.macOsAgentPoolName }}
     agentPoolVMImage: ${{ variables.macOsAgentPoolVMImage }}
-    psVersion: ${{ parameters._Preview }}
+    psVersion: ${{ parameters.ps_preview }}
     netCoreVersion: ${{ parameters.netCoreVersion_7 }}
