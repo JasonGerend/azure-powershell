@@ -5,22 +5,14 @@ param(
   $requiredPsVersion,
   [string]
   [Parameter(Mandatory = $true, Position = 1)]
-  $script
+  $script,
+  [string]
+  [Parameter(Mandatory = $false)]
+  $PowerShellPreviewPath,
+  [string]
+  [Parameter(Mandatory = $true)]
+  $AgentOS
 )
-
-$IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
-$IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
-
-if (-not $DestinationPowerShell) {
-  if ($IsWinEnv) {
-    $DestinationPowerShell = "D:\a\_work\1\s"
-  }elseif($IsLinuxEnv){
-    $DestinationPowerShell = "/mnt/vss/_work/1/s"
-  }elseif($IsMacOSEnv){
-    $DestinationPowerShell = "/Users/runner/work/1/s"
-  }
-}
 
 Write-Host "Required Version:", $requiredPsVersion, ", script:", $script
 $windowsPowershellVersion = "5.1.14"
@@ -33,8 +25,8 @@ if($requiredPsVersion -eq $windowsPowershellVersion){
                   $script `
                   Exit"
     if($requiredPsVersion -eq "preview"){
-      if (-not $IsWinEnv) { chmod 755 $DestinationPowerShell/pwsh }
-      ./pwsh -Command $command
+      if ( $AgentOS -ne $IsWinEnv) { chmod 755 "$PowerShellPreviewPath/pwsh" }
+      . "$PowerShellPreviewPath/pwsh" -Command $command
     }else{
       dotnet tool run pwsh -c $command
     }

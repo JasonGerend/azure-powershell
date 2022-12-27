@@ -3,7 +3,9 @@ param(
   [string]
   [Parameter(Mandatory = $false, Position = 0)]
   $requiredPsVersion,
-
+  [string]
+  [Parameter(Mandatory = $true)]
+  $AgentOS,
   [string]
   [Parameter(Mandatory = $false)]
   $PowerShellPreviewPath
@@ -21,7 +23,7 @@ function Install-PowerShell {
   if ($requiredPsVersion -ne $windowsPowershellVersion) {
     Write-Host "Installing PS $requiredPsVersion..."
     if ('preview' -eq $requiredPsVersion) {
-      Write-Host "PowerShell preview package has been extracted to $(PowerShellPreviewPath)."
+      Write-Host "PowerShell preview package has been extracted to $PowerShellPreviewPath."
     } else {
       dotnet --version
       dotnet new tool-manifest --force
@@ -47,8 +49,8 @@ function Install-PowerShell {
     Exit"
     if ('preview' -eq $requiredPsVersion) {
       # Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
-      if ("$(Agent.OS)" -ne "Windows_NT") { chmod 755 $PowerShellPreviewPath/pwsh }
-      . "$(PowerShellPreviewPath)/pwsh" -c $command
+      if ($AgentOS -ne "Windows_NT") { chmod 755 "$PowerShellPreviewPath/pwsh" }
+      . "$PowerShellPreviewPath/pwsh" -c $command
       Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     } else {
       dotnet tool run pwsh -c $command

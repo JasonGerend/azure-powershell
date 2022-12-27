@@ -3,11 +3,9 @@ param(
   [string]
   [Parameter(Mandatory = $true, Position = 0)]
   $DowanloadDir,
-
   [string]
   [Parameter(Mandatory = $true)]
   $AgentOS,
-
   [string]
   [Parameter(Mandatory = $true)]
   $AgentAarchitecture

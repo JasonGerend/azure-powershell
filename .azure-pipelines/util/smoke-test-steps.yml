@@ -25,7 +25,7 @@ jobs:
     displayName: DownLoad Package for ${{ parameters.psVersion }}
     inputs:
       filePath: 'tools/Test/SmokeTest/DownLoadPowershellPreviewPackage.ps1'
-      arguments: "-DowanloadDir: $(Build.SourcesDirectory) -AgentOS '$(Agent.OS)' -AgentAarchitecture '$(Agent.OSArchitecture)'"
+      arguments: '-DowanloadDir: $(Build.SourcesDirectory) -AgentOS "$(Agent.OS)" -AgentAarchitecture "$(Agent.OSArchitecture)"'
 
   - task: ExtractFiles@1
     condition: and(succeeded(), eq('${{ parameters.psVersion }}', 'preview'))
@@ -41,7 +41,7 @@ jobs:
     displayName: Prepare Powershell ${{ parameters.psVersion }}
     inputs:
       filePath: 'tools/Test/SmokeTest/PrepareRequiredPowershell.ps1'
-      arguments: "-RequiredPsVersion ${{ parameters.psVersion }} -PowerShellPreviewPath '$(destPath)'"
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -PowerShellPreviewPath "$(destPath)"'
       
   - task: DownloadPipelineArtifact@2
     condition: and(succeeded(), eq(variables['GalleryName'], 'LocalRepo'), eq(variables['PipelineId'], ''))
@@ -105,19 +105,19 @@ jobs:
     displayName: Install Az Modules from $(GalleryName)
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAzModules.ps1 -Gallery $(GalleryName) -LocalRepoLocation $(LocalRepoLocation)"'   
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAzModules.ps1 -Gallery $(GalleryName) -LocalRepoLocation $(LocalRepoLocation)" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'   
       
   - task: PowerShell@2
     displayName: Connect AzAccount 
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/ConnectAzAccount.ps1 $(Password) $(ServicePrincipal) $(TenantId) $(SubscriptionId) "'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/ConnectAzAccount.ps1 $(Password) $(ServicePrincipal) $(TenantId) $(SubscriptionId) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
 
   - task: PowerShell@2
     displayName: Run Smoke Test 
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 "'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
       failOnStderr: true
 
 
@@ -125,7 +125,7 @@ jobs:
     displayName: 'Run Smoke Test Reversely'
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 -Reverse"'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 -Reverse" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
       failOnStderr: true
 
 
@@ -133,19 +133,19 @@ jobs:
     displayName: Clean Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1"'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Update Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/UpdateAzModules.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) "'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/UpdateAzModules.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Run Smoke Test 
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 "'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
       failOnStderr: true
       
 
@@ -153,7 +153,7 @@ jobs:
     displayName: 'Run Smoke Test Reversely'
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 -Reverse "'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/RmCoreSmokeTests.ps1 -Reverse " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
       failOnStderr: true
 
 
@@ -161,46 +161,46 @@ jobs:
     displayName: Clean Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1"'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
     
   - task: PowerShell@2
     displayName: Install an individual module
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAnIndividualModule.ps1 -Gallery $(GalleryName) "'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAnIndividualModule.ps1 -Gallery $(GalleryName) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Clean Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1"'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Update an individual module
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/UpdateAnIndividualModule.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) "'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/UpdateAnIndividualModule.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Clean Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1"'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Install Az on top of an individual module
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAzOnTopOfAnIndividualModule.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) "'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAzOnTopOfAnIndividualModule.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
  
   - task: PowerShell@2
     displayName: Clean Az Modules
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1"'  
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/CleanAzModules.ps1" -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'  
 
   - task: PowerShell@2
     displayName: Install an individual module on top of Az
     inputs:
       filePath: 'tools/Test/SmokeTest/ScriptsCaller.ps1'
-      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAnIndividualModuleOnTopOfAz.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) "'
+      arguments: '-RequiredPsVersion ${{ parameters.psVersion }} -Script "./tools/Test/SmokeTest/InstallAnIndividualModuleOnTopOfAz.ps1 -Gallery $(GalleryName) -AllowEquality $(AllowEquality) " -PowerShellPreviewPath "$(destPath)" -AgentOS "$(Agent.OS)"'
