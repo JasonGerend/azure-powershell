@@ -21,14 +21,14 @@ jobs:
       version: ${{ parameters.netCoreVersion }}
     
   - task: PowerShell@2
-    condition: and(succeeded(), eq(${{ parameters.psVersion }}, 'preview'))
+    condition: and(succeeded(), eq('${{ parameters.psVersion }}', 'preview'))
     displayName: DownLoad Package for ${{ parameters.psVersion }}
     inputs:
       filePath: 'tools\Test\SmokeTest\DownLoadPowershellPreviewPackage.ps1'
       arguments: '-RequiredPsVersion ${{ parameters.psVersion }}'
 
   - task: ExtractFiles@1
-    condition: and(succeeded(), eq(${{ parameters.psVersion }}, 'preview'))
+    condition: and(succeeded(), eq('${{ parameters.psVersion }}', 'preview'))
     displayName: 'Extract PowerShell Preview Package '
     inputs:
       archiveFilePatterns: |
