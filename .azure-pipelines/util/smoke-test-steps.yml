@@ -32,10 +32,10 @@ jobs:
     displayName: 'Extract PowerShell Preview Package '
     inputs:
       archiveFilePatterns: |
-      *.zip
-      *.tar.gz
-    destinationFolder: '$(destPath)'
-    overwriteExistingFiles: true
+        *.zip
+        *.tar.gz
+      destinationFolder: '$(destPath)'
+      overwriteExistingFiles: true
   
   - task: PowerShell@2
     displayName: Prepare Powershell ${{ parameters.psVersion }}
