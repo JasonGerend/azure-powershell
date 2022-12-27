@@ -51,7 +51,6 @@ function Install-PowerShell {
       # Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
       if ($AgentOS -ne "Windows_NT") { chmod 755 "$PowerShellPreviewPath/pwsh" }
       . "$PowerShellPreviewPath/pwsh" -c $command
-      Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     } else {
       dotnet tool run pwsh -c $command
     }
