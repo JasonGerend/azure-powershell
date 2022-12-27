@@ -34,8 +34,8 @@ jobs:
       archiveFilePatterns: |
       *.zip
       *.tar.gz
-      destinationFolder: '$(destPath)'
-      overwriteExistingFiles: true
+    destinationFolder: '$(destPath)'
+    overwriteExistingFiles: true
   
   - task: PowerShell@2
     displayName: Prepare Powershell ${{ parameters.psVersion }}
