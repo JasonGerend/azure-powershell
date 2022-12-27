@@ -24,7 +24,7 @@ jobs:
     condition: and(succeeded(), eq('${{ parameters.psVersion }}', 'preview'))
     displayName: DownLoad Package for ${{ parameters.psVersion }}
     inputs:
-      filePath: 'tools\Test\SmokeTest\DownLoadPowershellPreviewPackage.ps1'
+      filePath: 'tools/Test/SmokeTest/DownLoadPowershellPreviewPackage.ps1'
       arguments: '-RequiredPsVersion ${{ parameters.psVersion }}'
 
   - task: ExtractFiles@1
