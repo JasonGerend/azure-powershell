@@ -1,5 +1,3 @@
-Write-Host $(Pipeline.Workspace), $(Agent.OS), $(Build.SourcesDirectory)
-
 $DowanloadDir = "$(Build.SourcesDirectory)"
 $ExtractDestination = Join-Path $(Build.SourcesDirectory) "ps_preview"
 $AgentOS, $AgentAarchitecture  = "$(Agent.OS)", "$(Agent.OSArchitecture)"

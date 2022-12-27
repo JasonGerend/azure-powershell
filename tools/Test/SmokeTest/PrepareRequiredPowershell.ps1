@@ -16,12 +16,12 @@ function Install-PowerShell {
   # Prepare powershell
   if ($requiredPsVersion -ne $windowsPowershellVersion) {
     Write-Host "Installing PS $requiredPsVersion..."
-    if('preview' -eq $requiredPsVersion){
+    if ('preview' -eq $requiredPsVersion) {
       Write-Host "PowerShell preview package has been extracted to $(destPath)."
-    }else{
+    } else {
       dotnet --version
       dotnet new tool-manifest --force
-      if('latest' -eq $requiredPsVersion){
+      if ( 'latest' -eq $requiredPsVersion ) {
         dotnet tool install PowerShell
       }
       else {
@@ -41,12 +41,12 @@ function Install-PowerShell {
   }else{
     $command = "Install-Module -Repository PSGallery -Name PowerShellGet -Scope CurrentUser -AllowClobber -Force `
     Exit"
-    if('preview' -eq $requiredPsVersion){
+    if ('preview' -eq $requiredPsVersion) {
       # Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
       if ("$(Agent.OS)" -ne "Windows_NT") { chmod 755 $Destination/pwsh }
       . "$(destPath)/pwsh" -c $command
       Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
-    }else{
+    } else {
       dotnet tool run pwsh -c $command
     }
   }
