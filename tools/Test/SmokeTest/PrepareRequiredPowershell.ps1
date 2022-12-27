@@ -12,6 +12,8 @@ param(
   $PowerShellPreviewPath
 )
 
+Write-Host {$env:destPath}
+
 function Install-PowerShell {
   param (
     [string]
