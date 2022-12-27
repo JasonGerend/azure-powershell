@@ -1,6 +1,13 @@
 # Variable 'BotAccessToken' was defined in the Variables tab
 # Multi-job configuration must be converted to matrix strategy: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#multi-job-configuration
-parameters: []
+parameters: 
+- name: AzurePowerShellVersion
+  displayName: The version of Azure PowerShell
+  type: string
+- name: IsLatestVersion
+  displayName: Is the Azure PowerShell version the latest version
+  type: boolean
+  default: true
 
 jobs:
 - job: Job_1
@@ -22,5 +29,12 @@ jobs:
       targetType: inline
       script: >-
         $context = New-AzStorageContext -StorageAccountName "$(StorageAccountName)"
-        Get-Item "artifacts/UX.zip" | Set-AzStorageBlobContent -Container $(StorageBlobContainerName) -Context $context -Force
+        If (${{ parameters.IsLatestVersion }})
+        {
+          Copy-Item "artifacts/UX.zip" -Destination "artifacts/azps-latest.zip"
+          Get-Item "artifacts/azps-latest.zip" | Set-AzStorageBlobContent -Container $(StorageBlobContainerName) -Context $context -Force
+        }
+        $zipFile = "artifacts/${{ parameters.AzurePowerShellVersion }}.zip"
+        Copy-Item "artifacts/UX.zip" -Destination $zipFile
+        Get-Item $zipFile | Set-AzStorageBlobContent -Container $(StorageBlobContainerName) -Context $context -Force
 

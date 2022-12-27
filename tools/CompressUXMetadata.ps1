@@ -40,15 +40,10 @@ ForEach ($ModuleName In $Modules)
         Continue
     }
 
-    $UXFolderPath = "$UXMetadataFolder/$ModuleName"
-    If (-Not (Test-Path -Path $UXFolderPath))
-    {
-        New-Item -ItemType Directory -Path $UXFolderPath
-    }
     ForEach ($MetadataFile In $MetadataFileArray)
     {
         $ResourceType = [System.IO.Path]::GetFileName([System.IO.Path]::GetDirectoryName($MetadataFile))
-        $ResourceTypeFolder = "$UXFolderPath/$ResourceType"
+        $ResourceTypeFolder = "$UXMetadataFolder/$ResourceType"
         If (-Not (Test-Path -Path $ResourceTypeFolder))
         {
             New-Item -ItemType Directory -Path $ResourceTypeFolder
