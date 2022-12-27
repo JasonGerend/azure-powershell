@@ -2,7 +2,7 @@
 param(
   [string]
   [Parameter(Mandatory = $true, Position = 0)]
-  $DowanloadDir$DowanloadDir
+  $DowanloadDir
 
   [string]
   [Parameter(Mandatory = $true)]
